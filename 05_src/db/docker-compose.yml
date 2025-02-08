@@ -1,9 +1,7 @@
-version: '3.8'
-
-services:  
+services:
   db:
     container_name: postgres_dsi_container
-    image: postgres:15.5-bullseye
+    image: postgres:latest
     restart: always
     env_file: ./.env
     environment:
@@ -13,13 +11,24 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    networks:
+      - dsi_network
+
   pgadmin:
     container_name: pgadmin4_dsi_container
-    image: dpage/pgadmin4:8.3
+    image: dpage/pgadmin4:latest
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL}"
       PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_DEFAULT_PASSWORD}"
     ports:
       - "5051:80"
+    networks:
+      - dsi_network
+    depends_on:
+      - db
+
+networks:
+  dsi_network:
+    driver: bridge
